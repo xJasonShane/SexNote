@@ -57,6 +57,24 @@ class DataHandler:
     def get_settings(self):
         return self.data['settings']
         
+    def get_partner(self, partner_id):
+        """
+        根据ID获取partner信息
+        :param partner_id: 要查找的partner ID
+        :return: 匹配的partner字典或None
+        """
+        for partner in self.data['partners']:
+            if partner.get('id') == partner_id:
+                return partner
+        return None
+        
+    def get_all_partners(self):
+        """
+        获取所有partner信息
+        :return: partners列表
+        """
+        return self.data['partners']
+        
     def query_partners(self, query_params, page=1, page_size=10):
         """
         根据查询参数筛选伙伴数据并返回分页结果
@@ -73,36 +91,7 @@ class DataHandler:
             end = start + page_size
             return filtered[start:end]
             
-        # 应用查询条件
-        if query_params.get('name'):
-            filtered = [p for p in filtered if query_params['name'].lower() in p.get('name', '').lower()]
-        if query_params.get('age'):
-            try:
-                age = int(query_params['age'])
-                filtered = [p for p in filtered if p.get('age') == age]
-            except ValueError:
-                pass
-        if query_params.get('bust'):
-            filtered = [p for p in filtered if query_params['bust'].lower() in p.get('bust', '').lower()]
-        if query_params.get('type'):
-            filtered = [p for p in filtered if query_params['type'].lower() in p.get('type', '').lower()]
-        if query_params.get('note'):
-            filtered = [p for p in filtered if query_params['note'].lower() in p.get('note', '').lower()]
-        if query_params.get('start_date') and query_params.get('end_date'):
-            filtered = [p for p in filtered if query_params['start_date'] <= p.get('date', '') <= query_params['end_date']]
-        if query_params.get('married') and query_params['married'] != "全部":
-            filtered = [p for p in filtered if p.get('married') == query_params['married']]
-        if query_params.get('in_love') and query_params['in_love'] != "全部":
-            filtered = [p for p in filtered if p.get('in_love') == query_params['in_love']]
-        if query_params.get('is_virgin') and query_params['is_virgin'] != "全部":
-            filtered = [p for p in filtered if p.get('is_virgin') == query_params['is_virgin']]
-        if query_params.get('has_child') and query_params['has_child'] != "全部":
-            filtered = [p for p in filtered if p.get('has_child') == query_params['has_child']]
-            
-        # 计算分页
-        start = (page - 1) * page_size
-        end = start + page_size
-        return filtered[start:end]
+
         
     def delete_partner(self, partner_name):
         """
@@ -114,33 +103,10 @@ class DataHandler:
         self.data['records'] = [r for r in self.data['records'] if r.get('partner_name') != partner_name]
         self.save_data()
         
-        # 应用查询条件
-        if query_params.get('name'):
-            filtered = [p for p in filtered if query_params['name'].lower() in p.get('name', '').lower()]
-        if query_params.get('age'):
-            try:
-                age = int(query_params['age'])
-                filtered = [p for p in filtered if p.get('age') == age]
-            except ValueError:
-                pass
-        if query_params.get('bust'):
-            filtered = [p for p in filtered if query_params['bust'].lower() in p.get('bust', '').lower()]
-        if query_params.get('type'):
-            filtered = [p for p in filtered if query_params['type'].lower() in p.get('type', '').lower()]
-        if query_params.get('note'):
-            filtered = [p for p in filtered if query_params['note'].lower() in p.get('note', '').lower()]
-        if query_params.get('start_date') and query_params.get('end_date'):
-            filtered = [p for p in filtered if query_params['start_date'] <= p.get('date', '') <= query_params['end_date']]
-        if query_params.get('married') and query_params['married'] != "全部":
-            filtered = [p for p in filtered if p.get('married') == query_params['married']]
-        if query_params.get('in_love') and query_params['in_love'] != "全部":
-            filtered = [p for p in filtered if p.get('in_love') == query_params['in_love']]
-        if query_params.get('is_virgin') and query_params['is_virgin'] != "全部":
-            filtered = [p for p in filtered if p.get('is_virgin') == query_params['is_virgin']]
-        if query_params.get('has_child') and query_params['has_child'] != "全部":
-            filtered = [p for p in filtered if p.get('has_child') == query_params['has_child']]
-            
-        # 计算分页
-        start = (page - 1) * page_size
-        end = start + page_size
-        return filtered[start:end]
+    def get_records(self, partner_id):
+        """
+        根据partner_id获取相关记录
+        :param partner_id: 要查询的partner ID
+        :return: 匹配的记录列表
+        """
+        return [r for r in self.data['records'] if r.get('partner_id') == partner_id]
