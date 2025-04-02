@@ -1,0 +1,40 @@
+{
+  "partners": [
+    {
+      "name": "1",
+      "age": 1,
+      "married": true,
+      "id": 1
+    },
+    {
+      "name": "2",
+      "age": 2,
+      "married": false,
+      "id": 2
+    },
+    {
+      "name": "2",
+      "age": 2,
+      "married": false,
+      "id": 3
+    },
+    {
+      "name": "3",
+      "age": 1,
+      "married": false,
+      "id": 4
+    },
+    {
+      "name": "1",
+      "age": 2,
+      "married": false,
+      "id": 5
+    }
+  ],
+  "records": [],
+  "settings": {
+    "version": "1.0.0",
+    "author": "开发者名称",
+    "github": "https://github.com/username/SexNote"
+  }
+}
