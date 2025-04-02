@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from data_handler import DataHandler
-from gui_components import AddPartnerFrame, SexRecordFrame, QueryFrame
+from gui_components import AddPartnerFrame, SexRecordFrame, QueryFrame, StatsFrame
 
 class MainApplication(tk.Tk):
     def __init__(self):
