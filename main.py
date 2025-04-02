@@ -1,13 +1,22 @@
 import tkinter as tk
 from tkinter import ttk
 from data_handler import DataHandler
-from gui_components import AddPartnerFrame, SexRecordFrame
+from gui_components import AddPartnerFrame, SexRecordFrame, QueryFrame
 
 class MainApplication(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("SexNote")
-        self.geometry("800x600")
+        
+        # 获取屏幕尺寸并计算窗口大小和位置
+        screen_width = self.winfo_screenwidth()
+        screen_height = self.winfo_screenheight()
+        window_width = int(screen_width * 0.6)
+        window_height = int(screen_height * 0.6)
+        x = (screen_width - window_width) // 2
+        y = (screen_height - window_height) // 2
+        self.geometry(f"{window_width}x{window_height}+{x}+{y}")
+        
         self.data_handler = DataHandler()
         
         # 创建导航栏
@@ -42,12 +51,12 @@ class MainApplication(tk.Tk):
     def show_query(self):
         for widget in self.main_frame.winfo_children():
             widget.destroy()
-        ttk.Label(self.main_frame, text="查询记录功能开发中").pack()
+        QueryFrame(self.main_frame, self.data_handler).pack(fill='both', expand=True)
 
     def show_stats(self):
         for widget in self.main_frame.winfo_children():
             widget.destroy()
-        ttk.Label(self.main_frame, text="数据统计功能开发中").pack()
+        StatsFrame(self.main_frame, self.data_handler).pack(fill='both', expand=True)
 
     def show_settings(self):
         for widget in self.main_frame.winfo_children():
