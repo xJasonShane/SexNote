@@ -349,16 +349,16 @@ class SettingsFrame(ttk.Frame):
         with open('config.json', 'r', encoding='utf-8') as f:
             config = json.load(f)
         
-        # 版本信息
-        ttk.Label(self, text=f"版本号: {config['version']}").pack(pady=5)
-        ttk.Label(self, text=f"作者: {config['author']}").pack(pady=5)
+        # 版本信息和GitHub链接
+        info_frame = ttk.Frame(self)
+        info_frame.grid(row=0, column=0, sticky="w", padx=5, pady=5)
         
-        # GitHub链接
-        github_frame = ttk.Frame(self)
-        github_frame.pack(pady=5)
-        ttk.Label(github_frame, text="GitHub: ").pack(side="left")
-        github_link = ttk.Label(github_frame, text=config['github_url'], foreground="blue")
-        github_link.pack(side="left")
+        ttk.Label(info_frame, text=f"版本号: {config['version']}").grid(row=0, column=0, padx=15)
+        ttk.Label(info_frame, text=f"作者: {config['author']}").grid(row=0, column=1, padx=15)
+        
+        ttk.Label(info_frame, text="GitHub: ").grid(row=0, column=2, padx=5)
+        github_link = ttk.Label(info_frame, text=config['github_url'], foreground="blue")
+        github_link.grid(row=0, column=3, padx=5)
         github_link.bind("<Button-1>", lambda e: self.open_github())
         
 
