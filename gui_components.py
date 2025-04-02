@@ -258,7 +258,7 @@ class QueryFrame(ttk.Frame):
         result_frame.pack(fill="both", expand=True, padx=5, pady=5)
         
         # 结果显示表格
-        self.tree = ttk.Treeview(result_frame, columns=("name", "age", "bust", "type", "date"), show="headings")
+        self.tree = ttk.Treeview(result_frame, columns=("name", "age", "bust", "type", "date", "note", "married", "in_love", "is_virgin", "has_child"), show="headings")
         self.tree.pack(fill="both", expand=True)
         
         self.tree.heading("name", text="姓名")
@@ -266,6 +266,11 @@ class QueryFrame(ttk.Frame):
         self.tree.heading("bust", text="胸围")
         self.tree.heading("type", text="户型")
         self.tree.heading("date", text="登记日期")
+        self.tree.heading("note", text="备注")
+        self.tree.heading("married", text="婚姻状态")
+        self.tree.heading("in_love", text="恋爱状态")
+        self.tree.heading("is_virgin", text="处女状态")
+        self.tree.heading("has_child", text="育子状态")
 
     def search(self):
         # 清空当前表格
@@ -543,7 +548,7 @@ class QueryFrame(ttk.Frame):
         ttk.Button(page_frame, text="下一页", command=self.next_page).pack(side="left", padx=5)
         
         # 结果显示表格
-        self.tree = ttk.Treeview(result_frame, columns=("name", "age", "bust", "type", "date"), show="headings")
+        self.tree = ttk.Treeview(result_frame, columns=("name", "age", "bust", "type", "date", "note", "married", "in_love", "is_virgin", "has_child"), show="headings")
         self.tree.pack(fill="both", expand=True)
         
         self.tree.heading("name", text="姓名")
@@ -551,6 +556,11 @@ class QueryFrame(ttk.Frame):
         self.tree.heading("bust", text="胸围")
         self.tree.heading("type", text="户型")
         self.tree.heading("date", text="登记日期")
+        self.tree.heading("note", text="备注")
+        self.tree.heading("married", text="婚姻状态")
+        self.tree.heading("in_love", text="恋爱状态")
+        self.tree.heading("is_virgin", text="处女状态")
+        self.tree.heading("has_child", text="育子状态")
         
 
     
@@ -569,8 +579,14 @@ class QueryFrame(ttk.Frame):
         }
         
         results = self.data_handler.query_partners(query_params, self.current_page, self.page_size)
-        self.display_results(results)
+        if not results:
+            tk.messagebox.showinfo("提示", "查询结果为空")
+        self.display_results(results or [])
     
+    def auto_resize_columns(self):
+        for col in self.tree["columns"]:
+            self.tree.column(col, width=100, minwidth=50, stretch=True)
+            
     def display_results(self, results):
         # 清空当前显示
         for item in self.tree.get_children():
@@ -583,8 +599,18 @@ class QueryFrame(ttk.Frame):
                 partner["age"],
                 partner["bust"],
                 partner["type"],
-                partner["date"]
+                partner["date"],
+                partner.get("note", ""),
+                partner.get("married", ""),
+                partner.get("in_love", ""),
+                partner.get("is_virgin", ""),
+                partner.get("has_child", "")
             ))
+        
+        # 设置列宽自适应
+        self.auto_resize_columns()
+        # 确保treeview填充父容器
+        self.tree.pack(fill='both', expand=True)
     
     def prev_page(self):
         if self.current_page > 1:
@@ -612,15 +638,16 @@ class QueryFrame(ttk.Frame):
         """删除选中的记录"""
         selected_item = self.tree.selection()
         if not selected_item:
-            messagebox.showwarning("警告", "请先选择要删除的记录")
+            tk.messagebox.showwarning("警告", "请先选择要删除的记录")
             return
             
         item = self.tree.item(selected_item)
         partner_name = item['values'][0]
         
-        if messagebox.askyesno("确认", f"确定要删除 {partner_name} 的记录吗？"):
+        if tk.messagebox.askyesno("确认", f"确定要删除 {partner_name} 的记录吗？"):
             self.data_handler.delete_partner(partner_name)
             self.search()
+            tk.messagebox.showinfo("提示", "删除成功")
 
 class SexRecordFrame(ttk.Frame):
     def __init__(self, parent, data_handler, partner_id):
@@ -631,39 +658,107 @@ class SexRecordFrame(ttk.Frame):
         self.main_app = parent.master if isinstance(parent.master, tk.Tk) else parent.master.master
 
     def create_widgets(self):
+        # 获取伴侣信息
+        partner = self.data_handler.get_partner(self.partner_id)
+        
+        # 显示伴侣基本信息
+        info_frame = ttk.Frame(self)
+        info_frame.grid(row=0, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
+        
+        ttk.Label(info_frame, text=f"姓名: {partner['name']}").grid(row=0, column=0, sticky="w")
+        ttk.Label(info_frame, text=f"年龄: {partner['age']}").grid(row=0, column=1, sticky="w")
+        ttk.Label(info_frame, text=f"胸围: {partner['bust']}").grid(row=1, column=0, sticky="w")
+        ttk.Label(info_frame, text=f"户型: {partner['type']}").grid(row=1, column=1, sticky="w")
+        
+        # 性爱记录输入区域
+        record_frame = ttk.Frame(self)
+        record_frame.grid(row=1, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
+        
         # 性爱地点输入框
-        ttk.Label(self, text="性爱地点：").grid(row=0, column=0)
-        self.location_entry = ttk.Entry(self)
-        self.location_entry.grid(row=0, column=1)
+        ttk.Label(record_frame, text="性爱地点：").grid(row=0, column=0, sticky="w")
+        self.location_entry = ttk.Entry(record_frame)
+        self.location_entry.grid(row=0, column=1, sticky="ew")
         
         # 性爱日期选择框
-        ttk.Label(self, text="性爱日期：").grid(row=1, column=0)
-        self.date_entry = ttk.Entry(self)
-        self.date_entry.grid(row=1, column=1)
+        ttk.Label(record_frame, text="性爱日期：").grid(row=1, column=0, sticky="w")
+        from tkcalendar import DateEntry
+        self.date_entry = DateEntry(record_frame, date_pattern='y-mm-dd')
+        self.date_entry.grid(row=1, column=1, sticky="ew")
         
         # 是否高潮选择框
-        ttk.Label(self, text="是否高潮：").grid(row=2, column=0)
+        ttk.Label(record_frame, text="是否高潮：").grid(row=2, column=0, sticky="w")
         self.orgasm_var = tk.StringVar()
-        self.orgasm_combobox = ttk.Combobox(self, textvariable=self.orgasm_var, values=["是", "否"])
-        self.orgasm_combobox.grid(row=2, column=1)
+        self.orgasm_combobox = ttk.Combobox(record_frame, textvariable=self.orgasm_var, values=["是", "否"])
+        self.orgasm_combobox.grid(row=2, column=1, sticky="ew")
         
         # 防护措施选择框
-        ttk.Label(self, text="防护措施：").grid(row=3, column=0)
+        ttk.Label(record_frame, text="防护措施：").grid(row=3, column=0, sticky="w")
         self.protection_var = tk.StringVar()
-        self.protection_combobox = ttk.Combobox(self, textvariable=self.protection_var, values=["无防护措施", "避孕套", "药物", "其他"])
-        self.protection_combobox.grid(row=3, column=1)
+        self.protection_combobox = ttk.Combobox(record_frame, textvariable=self.protection_var, values=["无防护措施", "避孕套", "药物", "其他"])
+        self.protection_combobox.grid(row=3, column=1, sticky="ew")
+        
+        # 历史记录显示区域
+        history_frame = ttk.Frame(self)
+        history_frame.grid(row=2, column=0, columnspan=2, sticky="nsew", padx=5, pady=5)
+        
+        # 历史记录表格
+        self.history_tree = ttk.Treeview(history_frame, columns=("date", "location", "orgasm", "protection"), show="headings")
+        self.history_tree.pack(fill="both", expand=True)
+        
+        self.history_tree.heading("date", text="日期")
+        self.history_tree.heading("location", text="地点")
+        self.history_tree.heading("orgasm", text="是否高潮")
+        self.history_tree.heading("protection", text="防护措施")
+        
+        # 加载历史记录
+        self.load_history()
         
         # 按钮区域
-        ttk.Button(self, text="添加记录", command=self.save_record).grid(row=4, column=0)
-        ttk.Button(self, text="返回", command=lambda: self.master.show_add()).grid(row=4, column=1)
+        button_frame = ttk.Frame(self)
+        button_frame.grid(row=3, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
+        
+        ttk.Button(button_frame, text="添加记录", command=self.save_record).grid(row=0, column=0, padx=5)
+        ttk.Button(button_frame, text="返回", command=lambda: self.master.show_add()).grid(row=0, column=1, padx=5)
 
+    def load_history(self):
+        """加载历史记录数据"""
+        records = self.data_handler.get_records(self.partner_id)
+        
+        # 清空当前表格
+        for item in self.history_tree.get_children():
+            self.history_tree.delete(item)
+        
+        # 添加历史记录
+        for record in records:
+            self.history_tree.insert("", "end", values=(
+                record.get('date', ''),
+                record.get('location', ''),
+                record.get('orgasm', ''),
+                record.get('protection', '')
+            ))
+    
     def save_record(self):
+        """保存新记录"""
         record_data = {
             'location': self.location_entry.get(),
             'date': self.date_entry.get(),
             'orgasm': self.orgasm_var.get(),
             'protection': self.protection_var.get()
         }
+        
+        # 验证必填字段
+        if not record_data['location'] or not record_data['date']:
+            messagebox.showerror("错误", "地点和日期是必填项")
+            return
+            
         self.data_handler.add_record(self.partner_id, record_data)
         messagebox.showinfo("成功", "记录已保存")
-        self.main_app.show_add()
+        
+        # 清空输入框
+        self.location_entry.delete(0, tk.END)
+        self.date_entry.set_date(None)
+        self.orgasm_var.set("")
+        self.protection_var.set("")
+        
+        # 刷新历史记录
+        self.load_history()
