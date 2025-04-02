@@ -52,7 +52,8 @@ class MainApplication(tk.Tk):
     def show_settings(self):
         for widget in self.main_frame.winfo_children():
             widget.destroy()
-        ttk.Label(self.main_frame, text="软件设置功能开发中").pack()
+        from gui_components import SettingsFrame
+        SettingsFrame(self.main_frame).pack(fill='both', expand=True)
 
     def show_sex_record(self, partner_id):
         for widget in self.main_frame.winfo_children():

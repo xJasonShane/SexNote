@@ -29,9 +29,76 @@
       "age": 2,
       "married": false,
       "id": 5
+    },
+    {
+      "name": "2",
+      "age": 3,
+      "bust": "4",
+      "type": "5",
+      "note": "1",
+      "date": "2025-04-02",
+      "married": true,
+      "in_love": false,
+      "is_virgin": true,
+      "has_child": false,
+      "id": 6
+    },
+    {
+      "name": "2",
+      "age": 3,
+      "bust": "4",
+      "type": "4",
+      "note": "4",
+      "date": "2025-04-02",
+      "married": false,
+      "in_love": false,
+      "is_virgin": false,
+      "has_child": true,
+      "id": 7
+    },
+    {
+      "name": "1",
+      "age": 1,
+      "bust": "1",
+      "type": "1",
+      "note": "",
+      "date": "2025-04-02",
+      "married": false,
+      "in_love": true,
+      "is_virgin": false,
+      "has_child": false,
+      "id": 8
+    },
+    {
+      "name": "1",
+      "age": 1,
+      "bust": "",
+      "type": "",
+      "note": "",
+      "date": "2025-04-02",
+      "married": false,
+      "in_love": false,
+      "is_virgin": false,
+      "has_child": true,
+      "id": 9
     }
   ],
-  "records": [],
+  "records": [
+    {
+      "location": "",
+      "date": "2025-04-02T11:25:28.347148",
+      "orgasm": "是",
+      "protection": "避孕套",
+      "partner_id": 8
+    },
+    {
+      "location": "1",
+      "date": "2025-04-02T11:26:11.491487",
+      "orgasm": "是",
+      "protection": "",
+      "partner_id": 9
+    }
+  ],
   "settings": {
     "version": "1.0.0",
     "author": "开发者名称",
